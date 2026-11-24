@@ -1,0 +1,30 @@
+# Gradle & Build outputs
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android Studio & IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local environment & keys (NEVER commit these)
+local.properties
+*.jks
+*.keystore
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Logs & temporary files
+*.log
+*.hprof
