@@ -1,5 +1,6 @@
 package com.example.receipt_to_invoice.ui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -21,12 +22,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.receipt_to_invoice.R;
 import com.example.receipt_to_invoice.ocr.OCR;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,7 +46,16 @@ public class OCRDumpActivity extends AppCompatActivity {
                         ocr.runOcr(o, OCRDumpActivity.this, new OCR.Callback() {
                             @Override
                             public void onSuccess(String alignedText) {
-                                saveText(alignedText);
+                                fileExecutor.execute(() -> {
+
+                                    //Get the exact text returned by the OCR
+                                    Map<String, String> out = ReceiptParser.parse(alignedText, "RO11997009");
+                                    runOnUiThread(() -> {
+                                        Intent intent = new Intent(OCRDumpActivity.this, PreviewReceiptDataActivity.class);
+                                        intent.putExtra(PreviewReceiptDataActivity.DATA_EXTRA, new HashMap<>(out)); //create a HashMap from the Map, because HashMap is serializable
+                                        startActivity(intent);
+                                    });
+                                });
                             }
 
                             @Override
@@ -71,7 +78,15 @@ public class OCRDumpActivity extends AppCompatActivity {
                 ocr.runOcr(cameraPhotoUri, OCRDumpActivity.this, new OCR.Callback() {
                     @Override
                     public void onSuccess(String alignedText) {
-                        saveText(alignedText);
+                        fileExecutor.execute(() -> {
+                            //Get the exact text returned by the OCR
+                            Map<String, String> out = ReceiptParser.parse(alignedText, "RO11997009");
+                            runOnUiThread(() -> {
+                                Intent intent = new Intent(OCRDumpActivity.this, PreviewReceiptDataActivity.class);
+                                intent.putExtra(PreviewReceiptDataActivity.DATA_EXTRA, new HashMap<>(out)); //create a HashMap from the Map, because HashMap is serializable
+                                startActivity(intent);
+                            });
+                        });
                     }
                     @Override
                     public void onError(String message) {
@@ -94,6 +109,8 @@ public class OCRDumpActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        setTitle("Creeaza bon");
 
         btnPick = findViewById(R.id.btnPick);
         btnPick.setOnClickListener(v -> {
@@ -129,32 +146,6 @@ public class OCRDumpActivity extends AppCompatActivity {
         });
     }
 
-
-    private void saveText(String alignedText){
-
-        String fileName = "ocr_" + System.currentTimeMillis() + ".txt";
-
-        fileExecutor.execute(() -> {
-
-            //Get the exact text returned by the OCR
-            Map<String, String> out = ReceiptParser.parse(alignedText, "RO11997009");
-
-            //getExternalFilesDir(null) => an app-specific, writable folder, no permissions needed
-            File outFile = new File(getExternalFilesDir(null), fileName);
-            try(FileOutputStream fos = new FileOutputStream(outFile);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                OutputStreamWriter osw = new OutputStreamWriter(bos,StandardCharsets.UTF_8)){
-
-                for(String field: out.keySet()){
-                    osw.write(field + ": "+ out.get(field) + "\n");
-                }
-                runOnUiThread(() -> Toast.makeText(this, "Saved " + fileName, Toast.LENGTH_LONG).show());
-            }catch (IOException e){
-                runOnUiThread(() -> Toast.makeText(this, "Cannot save file", Toast.LENGTH_LONG).show());
-            }
-        });
-
-    }
 
     @Override
     protected void onDestroy() {

@@ -2,4 +2,11 @@
     <string name="app_name">receipt_to_invoice</string>
     <string name="popup_camera">Fa o poza</string>
     <string name="popup_gallery">Alege din galerie</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="pick_receipt">Alege bon</string>
+    <string name="client_cui">Client CUI</string>
+    <string name="suma_totala">Suma totala</string>
+    <string name="tva">TVA</string>
+    <string name="data">Data</string>
+    <string name="genereaza_factura">Genereaza factura</string>
 </resources>
