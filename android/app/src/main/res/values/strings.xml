@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">receipt_to_invoice</string>
+    <string name="popup_camera">Fa o poza</string>
+    <string name="popup_gallery">Alege din galerie</string>
 </resources>

@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -51,6 +52,7 @@ public class OCR implements AutoCloseable {
                             @Override
                             public void onSuccess(Text text) {
                                 String alignedText = reconstructRows(text);
+                                Log.d("OCR result", alignedText);
                                 mainHandler.post(() -> callback.onSuccess(alignedText));
                             }
                         })

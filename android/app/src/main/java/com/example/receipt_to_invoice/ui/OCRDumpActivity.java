@@ -2,7 +2,9 @@ package com.example.receipt_to_invoice.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -75,7 +77,24 @@ public class OCRDumpActivity extends AppCompatActivity {
 
         btnPick = findViewById(R.id.btnPick);
         btnPick.setOnClickListener(v -> {
-            pickPhotoLauncher.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
+            PopupMenu popupMenu = new PopupMenu(this, btnPick);
+            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    int id = item.getItemId();
+                    if(id == R.id.popup_camera){
+                        //Open camera
+                        return true;
+                    }else if(id == R.id.popup_gallery){
+                        pickPhotoLauncher.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
+                        return true;
+                    }
+                    return true;
+                }
+            });
+
+            popupMenu.show();
         });
     }
 
