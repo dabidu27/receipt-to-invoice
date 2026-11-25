@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -62,6 +63,25 @@ public class OCRDumpActivity extends AppCompatActivity {
                 }
             });
 
+    private Uri cameraPhotoUri;
+    private final ActivityResultLauncher<Uri> takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean o) {
+            if(Boolean.TRUE.equals(o) && cameraPhotoUri != null){
+                ocr.runOcr(cameraPhotoUri, OCRDumpActivity.this, new OCR.Callback() {
+                    @Override
+                    public void onSuccess(String alignedText) {
+                        saveText(alignedText);
+                    }
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(OCRDumpActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+    });
+
     private Button btnPick;
 
     @Override
@@ -84,7 +104,18 @@ public class OCRDumpActivity extends AppCompatActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     int id = item.getItemId();
                     if(id == R.id.popup_camera){
-                        //Open camera
+
+                        try {
+                            //Create an empty file in the cache
+                            File imageFile = File.createTempFile("receipt_" ,".jpg", getCacheDir());
+                            //Get the Uri of the file through a FileProvider - this is where the photo taken by the camera will be saved
+                            cameraPhotoUri = FileProvider.getUriForFile(OCRDumpActivity.this, getPackageName() + ".fileprovider", imageFile);
+                            //Launch the camera - the callback, will run the ocr on the saved photo
+                            takePhotoLauncher.launch(cameraPhotoUri);
+                        } catch (IOException e) {
+                            Toast.makeText(OCRDumpActivity.this, "Cannot open camera. Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+
                         return true;
                     }else if(id == R.id.popup_gallery){
                         pickPhotoLauncher.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
