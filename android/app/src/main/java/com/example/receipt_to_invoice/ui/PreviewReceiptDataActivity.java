@@ -2,6 +2,7 @@ package com.example.receipt_to_invoice.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
@@ -42,6 +43,8 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
         }
     }
 
+    private Button btnToInvoice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +75,26 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
 
         ParsedDate date = parseDate(rawDate);
         dtData.init(date.year, date.getDatePickerMonth(), date.day, null);
+        btnToInvoice.setOnClickListener(v -> {
+            EditText invalidField = null;
+            if(etClientCui.getText().toString().trim().isEmpty()){
+                etClientCui.setError("Camp gol");
+                etClientCui.requestFocus();
+                invalidField = etClientCui;
+            } else if(etTotal.getText().toString().trim().isEmpty()){
+                etTotal.setError("Camp gol");
+                etTotal.requestFocus();
+                invalidField = etTotal;
+            } else if(etTVA.getText().toString().trim().isEmpty()){
+                etTVA.setError("Camp gol");
+                etTVA.requestFocus();
+                invalidField = etTVA;
+            }
+
+            if(invalidField != null)
+                return;
+
+        });
     }
 
     public static ParsedDate parseDate(String dateStr) {
@@ -110,6 +133,7 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
         etTVA = findViewById(R.id.etTVA);
         etClientCui = findViewById(R.id.etClientCui);
         dtData = findViewById(R.id.dpData);
+        btnToInvoice = findViewById(R.id.btnToInvoice);
     }
 
     @Override
