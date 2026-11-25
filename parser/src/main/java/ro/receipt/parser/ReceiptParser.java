@@ -10,17 +10,17 @@ import java.util.regex.Pattern;
 
 public class ReceiptParser {
 
-    // Amount as printed: "600,27" or "104, 18" (this printer puts a space after the comma)
-    private static final String AMOUNT = "\\d+[.,]\\s?\\d{2}";
+    // Amount as printed: "600,27", "104, 18" (space after comma), or "3 500,04" (space thousands separator)
+    private static final String AMOUNT = "\\d+(?:[ .]\\d+)*[.,]\\s?\\d{2}";
 
     // VAT row: handles both "A-21,00% 104,18 600,27" (2 amounts) AND "A-21, 00% 600, 27" (1 amount when VAT shifted to SUMA TAXE)
     private static final Pattern VAT_ROW = Pattern.compile(
             "\\b([A-Z])\\s*-\\s*(\\d{1,2}(?:[.,]\\s?\\d{1,2})?)\\s*%\\s+(?:("
                     + AMOUNT + ")\\s+)?(" + AMOUNT + ")");
 
-    // Total VAT line: handles OCR typos like "SUMA TAXE:", "SUMA TAYC:", "SUMA TAXA:"
+    // Total VAT line: handles "SUMA TAXE", "TOTAL TAXE", "SUMA TVA", "TOTAL TVA", and OCR typos like "SUMA TAYC:"
     private static final Pattern VAT_TOTAL = Pattern.compile(
-            "(?i)SUMA\\s+TA[A-Z]{2}\\s*:?\\s*(" + AMOUNT + ")");
+            "(?i)(?:SUMA|TOTAL)\\s+(?:TA[A-Z]{2}|TVA)\\s*:?\\s*(" + AMOUNT + ")");
 
     // Date printed year first: 2026.11.04
     private static final Pattern DATE_YMD = Pattern.compile("\\b(\\d{4})\\.\\s?(\\d{2})\\.\\s?(\\d{2})\\b");
@@ -108,9 +108,15 @@ public class ReceiptParser {
         return null;                                           // no date found
     }
 
-    // "104, 18" -> 104.18
+    // "104, 18" -> 104.18, "3 500,04" -> 3500.04, "3.500,04" -> 3500.04
     private static BigDecimal toDecimal(String s) {
-        return new BigDecimal(s.replace(" ", "").replace(',', '.'));
+        String clean = s.replace(" ", "");
+        if (clean.contains(",") && clean.contains(".")) {
+            clean = clean.replace(".", "").replace(',', '.');
+        } else {
+            clean = clean.replace(',', '.');
+        }
+        return new BigDecimal(clean);
     }
 
     // 600.27 with exactly 2 decimals, as a plain string

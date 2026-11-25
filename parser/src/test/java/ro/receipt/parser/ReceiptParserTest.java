@@ -46,6 +46,16 @@ public class ReceiptParserTest {
         assertEquals("2026-11-04", r.get("date"));
     }
 
+    @Test
+    void parseReceiptWithThousandsSeparatorAndTotalTaxe() {
+        String receiptText = loadReceipt("003.txt");
+        Map<String, String> r = ReceiptParser.parse(receiptText, "RO11997009");
+        assertEquals("1641682", r.get("clientCui"));
+        assertEquals("3500.04", r.get("total"));
+        assertEquals("607.44", r.get("vat"));
+        assertEquals("2026-11-25", r.get("date"));
+    }
+
     //Test that the CLIENT label alone is enough for a candidate CUI to win and be the chosen client CUI
     @Test
     void clientWinsEvenWithoutKnowingOwnCui() {
