@@ -14,18 +14,16 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.OCRDumpActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <provider
@@ -41,11 +39,11 @@
         <activity
             android:name=".ui.PreviewReceiptDataActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize" >
-
-        </activity>
-
-
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity
+            android:name=".ui.PdfPreviewActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

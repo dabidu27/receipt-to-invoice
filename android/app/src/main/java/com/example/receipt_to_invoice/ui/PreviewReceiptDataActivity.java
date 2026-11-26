@@ -7,6 +7,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -26,6 +27,8 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
     private EditText etTVA;
     private DatePicker dtData;
 
+    private Button btnToInvoice;
+
     public static class ParsedDate {
         public final int year;
         public final int month; // 1 - 12 (calendar month)
@@ -42,8 +45,6 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
             return Math.max(0, month - 1);
         }
     }
-
-    private Button btnToInvoice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,8 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
         ParsedDate date = parseDate(rawDate);
         dtData.init(date.year, date.getDatePickerMonth(), date.day, null);
         btnToInvoice.setOnClickListener(v -> {
+
+            //Validation
             EditText invalidField = null;
             if(etClientCui.getText().toString().trim().isEmpty()){
                 etClientCui.setError("Camp gol");
@@ -93,6 +96,10 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
 
             if(invalidField != null)
                 return;
+
+            //Go the invoice preview
+            Intent pdfPreview = new Intent(this, PdfPreviewActivity.class);
+            startActivity(pdfPreview);
 
         });
     }
