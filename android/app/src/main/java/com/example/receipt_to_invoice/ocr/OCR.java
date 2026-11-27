@@ -27,6 +27,8 @@ import java.util.concurrent.Executors;
 
 public class OCR implements AutoCloseable {
 
+    private static final String TAG = OCR.class.getSimpleName();
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final TextRecognizer recognizer =
@@ -52,7 +54,7 @@ public class OCR implements AutoCloseable {
                             @Override
                             public void onSuccess(Text text) {
                                 String alignedText = reconstructRows(text);
-                                Log.d("OCR result", alignedText);
+                                Log.d(TAG, alignedText);
                                 mainHandler.post(() -> callback.onSuccess(alignedText));
                             }
                         })

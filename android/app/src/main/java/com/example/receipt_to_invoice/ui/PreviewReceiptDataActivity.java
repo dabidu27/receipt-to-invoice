@@ -57,7 +57,7 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
             return insets;
         });
 
-        setTitle("Genereaza factura");
+        setTitle(R.string.genereaza_factura);
         if(getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -68,9 +68,9 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
         HashMap<String, String> receiptData = (HashMap<String, String>) intent.getSerializableExtra(DATA_EXTRA);
         String rawDate = null;
         if (receiptData != null) {
-            etClientCui.setText(receiptData.get("clientCui") != null ? receiptData.get("clientCui") : "Nu s-a gasit CUI client");
-            etTotal.setText(receiptData.get("total") != null ? receiptData.get("total") : "0");
-            etTVA.setText(receiptData.get("vat") != null ? receiptData.get("vat") : "0");
+            etClientCui.setText(receiptData.get("clientCui") != null ? receiptData.get("clientCui") : getString(R.string.nu_s_a_gasit_cui_client));
+            etTotal.setText(receiptData.get("total") != null ? receiptData.get("total") : getString(R.string.default_zero));
+            etTVA.setText(receiptData.get("vat") != null ? receiptData.get("vat") : getString(R.string.default_zero));
             rawDate = receiptData.get("date");
         }
 
@@ -81,15 +81,15 @@ public class PreviewReceiptDataActivity extends AppCompatActivity {
             //Validation
             EditText invalidField = null;
             if(etClientCui.getText().toString().trim().isEmpty()){
-                etClientCui.setError("Camp gol");
+                etClientCui.setError(getString(R.string.camp_gol));
                 etClientCui.requestFocus();
                 invalidField = etClientCui;
             } else if(etTotal.getText().toString().trim().isEmpty()){
-                etTotal.setError("Camp gol");
+                etTotal.setError(getString(R.string.camp_gol));
                 etTotal.requestFocus();
                 invalidField = etTotal;
             } else if(etTVA.getText().toString().trim().isEmpty()){
-                etTVA.setError("Camp gol");
+                etTVA.setError(getString(R.string.camp_gol));
                 etTVA.requestFocus();
                 invalidField = etTVA;
             }

@@ -49,7 +49,7 @@ public class OCRDumpActivity extends AppCompatActivity {
                                 fileExecutor.execute(() -> {
 
                                     //Get the exact text returned by the OCR
-                                    Map<String, String> out = ReceiptParser.parse(alignedText, "RO11997009");
+                                    Map<String, String> out = ReceiptParser.parse(alignedText, getString(R.string.default_cui));
                                     runOnUiThread(() -> {
                                         Intent intent = new Intent(OCRDumpActivity.this, PreviewReceiptDataActivity.class);
                                         intent.putExtra(PreviewReceiptDataActivity.DATA_EXTRA, new HashMap<>(out)); //create a HashMap from the Map, because HashMap is serializable
@@ -60,7 +60,7 @@ public class OCRDumpActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(String message) {
-                                Toast.makeText(OCRDumpActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(OCRDumpActivity.this, getString(R.string.ocr_error, message), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }else{
@@ -80,7 +80,7 @@ public class OCRDumpActivity extends AppCompatActivity {
                     public void onSuccess(String alignedText) {
                         fileExecutor.execute(() -> {
                             //Get the exact text returned by the OCR
-                            Map<String, String> out = ReceiptParser.parse(alignedText, "RO11997009");
+                            Map<String, String> out = ReceiptParser.parse(alignedText, getString(R.string.default_cui));
                             runOnUiThread(() -> {
                                 Intent intent = new Intent(OCRDumpActivity.this, PreviewReceiptDataActivity.class);
                                 intent.putExtra(PreviewReceiptDataActivity.DATA_EXTRA, new HashMap<>(out)); //create a HashMap from the Map, because HashMap is serializable
@@ -90,7 +90,7 @@ public class OCRDumpActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(OCRDumpActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OCRDumpActivity.this, getString(R.string.ocr_error, message), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -110,7 +110,7 @@ public class OCRDumpActivity extends AppCompatActivity {
             return insets;
         });
 
-        setTitle("Creeaza bon");
+        setTitle(R.string.creeaza_bon);
 
         btnPick = findViewById(R.id.btnPick);
         btnPick.setOnClickListener(v -> {
@@ -130,7 +130,7 @@ public class OCRDumpActivity extends AppCompatActivity {
                             //Launch the camera - the callback, will run the ocr on the saved photo
                             takePhotoLauncher.launch(cameraPhotoUri);
                         } catch (IOException e) {
-                            Toast.makeText(OCRDumpActivity.this, "Cannot open camera. Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(OCRDumpActivity.this, getString(R.string.camera_open_error, e.getMessage()), Toast.LENGTH_SHORT).show();
                         }
 
                         return true;
